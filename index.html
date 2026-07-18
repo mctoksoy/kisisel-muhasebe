@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hesabım | Kişisel Muhasebe</title>
+  <style>
+    :root{--bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#69758a;--line:#e6ebf4;--primary:#4b63e9;--green:#13845f;--red:#d44f64;--amber:#a76c00}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+    .wrap{max-width:1120px;margin:auto;padding:40px 24px 64px} header{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px}.brand{display:flex;gap:12px;align-items:center;font-size:22px;font-weight:800}.logo{display:grid;place-items:center;width:40px;height:40px;border-radius:13px;background:var(--primary);color:#fff}.month,.hint{color:var(--muted);font-size:14px}h1{margin:0 0 7px;font-size:clamp(28px,4vw,40px);letter-spacing:-1.2px}.lead{margin:0 0 25px;color:var(--muted)}
+    .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:25px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:21px;box-shadow:0 7px 24px rgba(32,45,78,.04)}.card p{margin:0 0 9px;color:var(--muted);font-size:13px}.amount{font-size:23px;font-weight:800;letter-spacing:-.7px}.green{color:var(--green)}.red{color:var(--red)}.amber{color:var(--amber)}
+    .grid{display:grid;grid-template-columns:350px 1fr;gap:22px;align-items:start}.stack{display:grid;gap:22px}h2{margin:0 0 4px;font-size:18px}.sub{margin:0 0 17px;color:var(--muted);font-size:13px}label{display:block;margin:13px 0 6px;font-size:13px;font-weight:700}input,select{width:100%;border:1px solid #dce3ee;border-radius:10px;padding:11px 12px;background:#fff;color:var(--ink);font:inherit}input:focus,select:focus{outline:3px solid #dfe4ff;border-color:var(--primary)}button{border:0;border-radius:10px;padding:11px 15px;font:inherit;font-weight:700;cursor:pointer}.add{width:100%;margin-top:19px;background:var(--primary);color:#fff}.add:hover{background:#3b52d5}.transactions{padding:0;overflow:hidden}.list-head{display:flex;align-items:center;justify-content:space-between;padding:21px 21px 14px}.clear{background:transparent;color:var(--muted);font-size:13px;padding:6px}.row{display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;padding:15px 21px;border-top:1px solid var(--line)}.icon{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;background:#eef1ff}.item-title{font-size:14px;font-weight:750}.item-meta{margin-top:3px;color:var(--muted);font-size:12px}.item-value{font-size:14px;font-weight:800}.empty{padding:40px 20px;text-align:center;border-top:1px solid var(--line);color:var(--muted)}.progress{height:9px;margin:15px 0 8px;border-radius:99px;background:#edf0f6;overflow:hidden}.bar{height:100%;background:var(--primary);border-radius:inherit}.installment-data{display:grid;grid-template-columns:1fr 1fr;gap:11px}.installment-result{display:flex;justify-content:space-between;gap:12px;padding-top:10px;font-size:14px}.installment-result strong{font-size:16px}
+    @media(max-width:860px){.summary{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}@media(max-width:480px){.wrap{padding:26px 16px}.summary{grid-template-columns:1fr}.card{padding:18px}.row{padding:14px 16px}.list-head{padding:18px 16px}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header><div class="brand"><span class="logo">₺</span> Hesabım</div><span class="month" id="today"></span></header>
+    <h1>Paran ve borçların tek yerde.</h1><p class="lead">Nakit harcamalarını, kredi kartını ve Eminevim taksitlerini takip et.</p>
+    <section class="summary">
+      <article class="card"><p>Nakitte kalan</p><div class="amount" id="cash-balance">₺0,00</div></article>
+      <article class="card"><p>Kredi kartı borcu</p><div class="amount red" id="card-debt">₺0,00</div></article>
+      <article class="card"><p>Kartta kullanılabilir</p><div class="amount green" id="card-available">Limit girilmedi</div></article>
+      <article class="card"><p>Eminevim kalan taksit</p><div class="amount amber" id="installments-left">Ayarlanmamış</div></article>
+    </section>
+    <section class="grid">
+      <div class="stack">
+        <form class="card" id="entry-form">
+          <h2>Yeni işlem</h2><p class="sub">Kart harcaması nakit bakiyeyi azaltmaz; kart borcuna eklenir.</p>
+          <label for="description">Açıklama</label><input id="description" required placeholder="Örn. Market alışverişi" maxlength="50">
+          <label for="type">İşlem türü</label><select id="type"><option value="expense">Nakit gider</option><option value="card_expense">Kredi kartı harcaması</option><option value="card_payment">Kredi kartı ödemesi</option><option value="income">Gelir</option></select>
+          <label for="category">Kategori</label><input id="category" required placeholder="Örn. Yaşam" maxlength="30">
+          <label for="value">Tutar (₺)</label><input id="value" required type="number" min="0.01" step="0.01" placeholder="0,00">
+          <label for="card-limit">Kredi kartı limiti (₺)</label><input id="card-limit" type="number" min="0" step="0.01" placeholder="Örn. 50000">
+          <button class="add" type="submit">İşlemi kaydet</button>
+        </form>
+        <form class="card" id="installment-form">
+          <h2>Eminevim araç takibi</h2><p class="sub">Toplam taksit sayısını ve şimdiye kadar ödediğin taksitleri yaz.</p>
+          <div class="installment-data"><div><label for="total-installments">Toplam taksit</label><input id="total-installments" min="1" type="number" placeholder="120"></div><div><label for="paid-installments">Ödenen taksit</label><input id="paid-installments" min="0" type="number" placeholder="12"></div></div>
+          <label for="monthly-payment">Aylık taksit tutarı (₺)</label><input id="monthly-payment" min="0" step="0.01" type="number" placeholder="0,00">
+          <button class="add" type="submit">Taksit bilgisini kaydet</button>
+        </form>
+      </div>
+      <div class="stack">
+        <section class="card" id="installment-card"><h2>Eminevim planın</h2><p class="sub" id="plan-text">Taksit bilgilerini girerek planını gör.</p><div class="progress"><div class="bar" id="progress-bar" style="width:0%"></div></div><div class="installment-result"><span id="progress-text">—</span><strong id="remaining-value">—</strong></div></section>
+        <section class="card transactions"><div class="list-head"><h2>Son işlemler</h2><button class="clear" id="clear" type="button">Tümünü temizle</button></div><div id="transaction-list"></div></section>
+      </div>
+    </section>
+  </main>
+  <script>
+    const transactionKey='hesabim-transactions', installmentKey='hesabim-installments', cardLimitKey='hesabim-card-limit';
+    let entries=JSON.parse(localStorage.getItem(transactionKey)||'[]');
+    let plan=JSON.parse(localStorage.getItem(installmentKey)||'{}');
+    const money=v=>new Intl.NumberFormat('tr-TR',{style:'currency',currency:'TRY'}).format(v);
+    const $=id=>document.getElementById(id);
+    $('today').textContent=new Intl.DateTimeFormat('tr-TR',{month:'long',year:'numeric'}).format(new Date());
+    function safe(text){const el=document.createElement('span');el.textContent=text;return el.innerHTML}
+    function render(){
+      const income=entries.filter(x=>x.type==='income').reduce((a,x)=>a+x.value,0);
+      const cashOut=entries.filter(x=>x.type==='expense'||x.type==='card_payment').reduce((a,x)=>a+x.value,0);
+      const cardSpent=entries.filter(x=>x.type==='card_expense').reduce((a,x)=>a+x.value,0);
+      const cardPaid=entries.filter(x=>x.type==='card_payment').reduce((a,x)=>a+x.value,0);
+      const debt=Math.max(0,cardSpent-cardPaid); $('cash-balance').textContent=money(income-cashOut); $('card-debt').textContent=money(debt);
+      const limit=Number(localStorage.getItem(cardLimitKey)||0); $('card-available').textContent=limit?money(Math.max(0,limit-debt)):'Limit girilmedi'; $('card-limit').value=limit||'';
+      const list=$('transaction-list'); const labels={income:'Gelir',expense:'Nakit gider',card_expense:'Kart harcaması',card_payment:'Kart ödemesi'};
+      list.innerHTML=entries.length?entries.slice().reverse().map(x=>`<div class="row"><div class="icon">${x.type==='income'?'↗':x.type==='card_expense'?'💳':'↘'}</div><div><div class="item-title">${safe(x.description)}</div><div class="item-meta">${labels[x.type]} · ${safe(x.category)} · ${x.date}</div></div><div class="item-value ${x.type==='income'?'green':'red'}">${x.type==='income'?'+':'−'}${money(x.value)}</div></div>`).join(''):'<div class="empty">Henüz işlem eklemedin.</div>';
+      localStorage.setItem(transactionKey,JSON.stringify(entries)); renderPlan();
+    }
+    function renderPlan(){
+      const total=Number(plan.total||0), paid=Math.min(Number(plan.paid||0),total), monthly=Number(plan.monthly||0), left=Math.max(0,total-paid), percent=total?paid/total*100:0;
+      $('installments-left').textContent=total?`${left} taksit`:'Ayarlanmamış'; $('progress-bar').style.width=`${percent}%`;
+      $('plan-text').textContent=total?`Araç organizasyonu için ödeme planın.`:'Taksit bilgilerini girerek planını gör.'; $('progress-text').textContent=total?`${paid} / ${total} taksit ödendi`:'—'; $('remaining-value').textContent=total?(monthly?money(left*monthly)+' kaldı':left+' taksit kaldı'):'—';
+      $('total-installments').value=total||''; $('paid-installments').value=plan.paid||''; $('monthly-payment').value=plan.monthly||'';
+    }
+    $('entry-form').addEventListener('submit',e=>{e.preventDefault();const limit=$('card-limit').value;if(limit!=='')localStorage.setItem(cardLimitKey,Number(limit));entries.push({description:$('description').value.trim(),type:$('type').value,category:$('category').value.trim(),value:Number($('value').value),date:new Intl.DateTimeFormat('tr-TR',{day:'2-digit',month:'short'}).format(new Date())});e.currentTarget.reset();render()});
+    $('installment-form').addEventListener('submit',e=>{e.preventDefault();plan={total:Number($('total-installments').value),paid:Number($('paid-installments').value),monthly:Number($('monthly-payment').value)};localStorage.setItem(installmentKey,JSON.stringify(plan));renderPlan()});
+    $('clear').addEventListener('click',()=>{if(confirm('Tüm işlemler silinsin mi?')){entries=[];render()}});render();
+  </script>
+</body>
+</html>
